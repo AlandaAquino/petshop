@@ -15,9 +15,9 @@ let pets = [
     {
         nome: 'Lulu',
         tipo: 'cachorro',
-        idade: 5,
+        idade: 3,
         raca: 'vira-lata',
-        peso: 3,
+        peso: 5,
         tutor: 'Maria',
         contato: '(81) 4002-8922',
         Vacinado: false,
@@ -30,7 +30,7 @@ let pets = [
         idade: 1,
         raca: 'persa',
         peso: 2,
-        tutor: 'jon',
+        tutor: 'Ana',
         contato: '(81) 4002-8922',
         Vacinado: false,
         servicos: ['banho', 'tosa']
@@ -39,8 +39,9 @@ let pets = [
 
 //console.log(pets);
 const listarPets = () => {
-    for (let i = 0; i < pets.length; i++){
-        console.log(pets[i].nome);
+    for (let pet of pets){
+        //console.log(pets[i].nome);
+        console.log(`${pet.nome}, ${pet.idade}, ${pet.tipo}, ${pet.raca}`);
     }
 }
 listarPets();
