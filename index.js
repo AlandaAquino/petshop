@@ -1,5 +1,4 @@
 const moment = require('moment');
-const nomePetshop = "Petshop Avanade";
 const fs = require('fs');
 let database = fs.readFileSync("./database.json");
 let pets = database.pets;
@@ -8,18 +7,29 @@ database = JSON.parse(database);
 
 const atualizarBanco = () => {
     //conversão de objeto javascript para JSON
-    let petsAtualizado = JSON.stringify(database);
+    let petsAtualizado = JSON.stringify(database, null, 2);
     //atualização do arquivo database.json
     fs.writeFileSync('database.json', petsAtualizado, 'utf-8');
 }
 
-//console.log(pets);
+
 const listarPets = () => {
-    for (let pet of database.pets){
-        //console.log(pets[i].nome);
-        console.log(`O Nome do pet é ${pet.nome}, e o nome do  tutor é ${pet.tutor} e ele ${pet.Vacinado ? "foi vacinado" : "não foi vacinado"}`);
-    }
+
+    database.pets.forEach((pet) => {
+
+        console.log(`${pet.nome}, ${pet.idade} anos, ${pet.tipo}, ${pet.raca}, ${(pet.Vacinado) ? 'vacinado': 'não vacinado'}`);
+    
+        pet.servicos.forEach((servico) => {
+            console.log(`${servico.data} - ${servico.nome}`);
+        })
+    })
 }
+// const listarPets = () => {
+//     for (let pet of database.pets){
+//         //console.log(pets[i].nome);
+//         console.log(`O Nome do pet é ${pet.nome}, e o nome do  tutor é ${pet.tutor} e ele ${pet.Vacinado ? "foi vacinado" : "não foi vacinado"}`);
+//     }
+// }
 
 const vacinarPet = (pet) => {
     if (pet.Vacinado === true) {
@@ -34,15 +44,32 @@ const vacinarPet = (pet) => {
 
 
 const vacinacaoPets = () => {
-    totalVacinados = 0;
-    for (let pet of database.pets) {
-        if (pet.Vacinado === false){
-            pet.Vacinado = true;
-            totalVacinados++;
+    console.log("Campanha de vacina 2021");
+    console.log("vacinando...");
+
+    let petVacinadosCampanha = 0;
+
+    database.pets = database.pets.map((pet) => {
+        if (!pet.Vacinado) {
+            vacinarPet(pet);
+            petVacinadosCampanha++;
         }
-    }
-    console.log(`${totalVacinados} animais foram vacinados nessa campanha.`)
-}
+
+        return pet;
+    });
+
+    // atualizarBanco();
+    console.log(`${petVacinadosCampanha} pets foram vaciados nessa campanha!`);
+};
+//     totalVacinados = 0;
+//     for (let pet of database.pets) {
+//         if (pet.Vacinado === false){
+//             pet.Vacinado = true;
+//             totalVacinados++;
+//         }
+//     }
+//     console.log(`${totalVacinados} animais foram vacinados nessa campanha.`)
+// }
 
 const adicionarPet = novoPet => {
     database.pets.push(novoPet);
@@ -86,23 +113,58 @@ const atenderCliente = (pet, servicos) => {
     console.log(`Tchau. Até mais!`)
 }
 
+const buscarPet = (nomePet) => {
 
-adicionarPet({
-        "nome":"star",
-        "tipo":"cachorro",
-        "idade":5,
-        "raca":"bulldog",
-        "peso":10,
-        "tutor":"Nanda",
-        "contato":"(81) 4002-8922",
-        "Vacinado":true,
-        "servicos":[]
-})
+    let petEncontrado = database.pets.find((pet) => {
+        return pet.nome == nomePet;
+    });
+
+    return petEncontrado ? petEncontrado : `Nenhum pet encontrado com nome ${nomePet}`;
+}
+
+const filtrarTipoPet = (tipoPet) => {
+    // && E - AND
+    // || OU - OR
+    // == verifica valores iguais
+    // === verifica valores e tipos iguais
+    let petsEncontrados = database.pets.filter((pet) => {
+        return pet.tipo == tipoPet;
+    });
+
+    return petsEncontrados;
+}
+
+const clientePremium = (pet) => {
+    let nServicos = pet.servicos.length;
+
+    if (nServicos > 5) {
+        console.log(`Olá, ${pet.nome}! Você é um cliente especial e ganhou um descontão!`);
+    } else {
+        console.log(`Olá, ${pet.nome}! Você ainda não tem descontos disponiveis!`);
+    }
+}
+
+
+// adicionarPet({
+//         "nome":"Draco",
+//         "tipo":"gato",
+//         "idade":5,
+//         "raca":"Turkish Van",
+//         "peso":10,
+//         "tutor":"Ana Maria",
+//         "contato":"(11) 2233-4455",
+//         "Vacinado":true,
+//         "servicos":[]
+// })
 //adicionarPet('Banguela', 'gato', 4, 'Siamês', 2, 'Tiago', '81 1234-5678', true, []);
 // darBanho(database.pets[3]);
 // apararUnhasPet(pets[2]);
 // console.log(pets);
 // atenderCliente(pets[1], apararUnhasPet)
-// listarPets();
+//listarPets();
 // vacinarPet(pets[2]);
-// vacinacaoPets();
+//vacinacaoPets();
+
+// clientePremium(database.pets[4])
+// console.log(buscarPet('Draco'));
+// console.log(clientePremium(database.pets[2]));
